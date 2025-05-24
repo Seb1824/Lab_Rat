@@ -1,49 +1,35 @@
 import pygame
 from a_star import a_star
+from constants import WIDTH, ROWS, CELL_SIZE, WHITE, BLACK, GRAY, BLUE, RED, YELLOW, FPS, DIRECTIONS, MSG_WIN, MSG_LOSE
+import random
 
-WIDTH = 600
-ROWS = 20
-CELL_SIZE = WIDTH // ROWS
-FPS = 10
-
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-GRAY = (200, 200, 200)
-BLUE = (0, 0, 255)
-RED = (255, 0, 0)
-YELLOW = (255, 255, 0)
 
 pygame.init()
 WIN = pygame.display.set_mode((WIDTH, WIDTH))
 pygame.display.set_caption("Lab Rat Escape")
 
-# 0 = camino, 1 = muro
-maze = [
-    [0,1,0,0,0,0,0,1,0,0,0,1,0,1,0,1,0,0,0,0],
-    [0,1,0,1,1,1,0,1,0,1,0,1,0,1,0,1,1,1,1,0],
-    [0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,1,0],
-    [1,1,1,1,0,1,1,1,0,1,1,1,1,1,1,1,0,1,1,0],
-    [0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0],
-    [0,1,1,1,1,1,0,1,1,1,1,1,1,1,0,1,1,1,1,0],
-    [0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0],
-    [1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0],
-    [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0],
-    [0,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0,1,0],
-    [0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,1,0],
-    [1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0,1,0,1,0],
-    [0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,1,0,0,0],
-    [0,1,1,1,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1],
-    [0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
-    [1,1,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
-    [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0]
-]
+def generate_maze(rows):
+    maze = [[1 for _ in range(rows)] for _ in range(rows)]
 
-start_pos = (0, 0)
-goal_pos = (19, 19)
-robot_pos = (19, 0)
+    def carve_passages_from(cx, cy):
+        directions = [(0,1),(1,0),(0,-1),(-1,0)]
+        random.shuffle(directions)
+        for dx, dy in directions:
+            nx, ny = cx + dx*2, cy + dy*2
+            if 0 <= nx < rows and 0 <= ny < rows and maze[nx][ny] == 1:
+                maze[cx + dx][cy + dy] = 0  # romper muro intermedio
+                maze[nx][ny] = 0            # marcar celda destino
+                carve_passages_from(nx, ny)
+
+    maze[1][1] = 0
+    carve_passages_from(1,1)
+    return maze
+
+ROWS = 21  # debe ser impar para el algoritmo
+maze = generate_maze(ROWS)
+start_pos = (1, 1)
+goal_pos = (ROWS - 2, ROWS - 2)
+robot_pos = (ROWS - 2, 1)
 
 def draw_grid():
     for row in range(ROWS):
@@ -98,10 +84,10 @@ def main():
         pygame.display.update()
 
         if start_pos == goal_pos:
-            print("¡Ganaste!")
+            print(MSG_WIN)
             running = False
         elif robot_pos == start_pos:
-            print("¡Te atraparon!")
+            print(MSG_LOSE)
             running = False
 
     pygame.quit()
