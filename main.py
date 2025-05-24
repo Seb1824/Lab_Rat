@@ -1,5 +1,5 @@
 import pygame
-from queue import PriorityQueue
+from a_star import a_star
 
 WIDTH = 600
 ROWS = 20
@@ -61,37 +61,7 @@ def draw_entity(pos, color):
     y = pos[0] * CELL_SIZE
     pygame.draw.rect(WIN, color, (x, y, CELL_SIZE, CELL_SIZE))
 
-def heuristic(a, b):
-    return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
-def a_star(start, goal):
-    open_set = PriorityQueue()
-    open_set.put((0, start))
-    came_from = {}
-    g_score = {start: 0}
-
-    while not open_set.empty():
-        _, current = open_set.get()
-
-        if current == goal:
-            path = []
-            while current in came_from:
-                path.append(current)
-                current = came_from[current]
-            path.reverse()
-            return path
-
-        for d in [(-1,0), (1,0), (0,-1), (0,1)]:
-            neighbor = (current[0] + d[0], current[1] + d[1])
-
-            if 0 <= neighbor[0] < ROWS and 0 <= neighbor[1] < ROWS and maze[neighbor[0]][neighbor[1]] == 0:
-                temp_g = g_score[current] + 1
-                if neighbor not in g_score or temp_g < g_score[neighbor]:
-                    g_score[neighbor] = temp_g
-                    f_score = temp_g + heuristic(neighbor, goal)
-                    open_set.put((f_score, neighbor))
-                    came_from[neighbor] = current
-    return []
 
 def main():
     global start_pos, robot_pos
@@ -116,7 +86,7 @@ def main():
             start_pos = new_pos
 
         # A* para mover al robot
-        path = a_star(robot_pos, start_pos)
+        path = a_star(robot_pos, start_pos, maze)
         if path:
             robot_pos = path[0]  # mueve 1 paso
 
