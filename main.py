@@ -3,7 +3,7 @@
 import pygame
 import random
 from constants import *
-from maze import generate_maze
+from maze import generate_map
 from player import player_pos, player_dir, update_player_position
 from robot import robot_pos, robot_dir
 from a_star import a_star
@@ -15,10 +15,12 @@ pygame.display.set_caption("Lab Rat Escape")
 from images import rat_images, robot_images, cheese_images
 
 # Retardo en frames
-robot_move_delay = 2  
+robot_move_delay = 2.5  
 robot_move_counter = 0
 
-maze = generate_maze(GRID_HEIGHT, GRID_WIDTH)
+maze = generate_map(GRID_HEIGHT, GRID_WIDTH, density=0.3)
+player_pos = (1, 1)
+robot_pos = (GRID_HEIGHT // 2, GRID_WIDTH // 2)
 goal_pos = (GRID_HEIGHT - 2, GRID_WIDTH - 2)
 
 def draw_grid():
