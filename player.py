@@ -5,6 +5,7 @@ import pygame
 player_pos = (1, 1)
 player_dir = (0, 1)
 
+
 def update_player_position(keys, current_pos, current_dir, maze):
     dx, dy = 0, 0
     if keys[pygame.K_UP]: dx, dy = -1, 0
