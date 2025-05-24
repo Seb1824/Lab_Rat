@@ -1,49 +1,35 @@
 import pygame
-from queue import PriorityQueue
+from a_star import a_star
+from constants import WIDTH, ROWS, CELL_SIZE, WHITE, BLACK, GRAY, BLUE, RED, YELLOW, FPS, DIRECTIONS, MSG_WIN, MSG_LOSE
+import random
 
-WIDTH = 600
-ROWS = 20
-CELL_SIZE = WIDTH // ROWS
-FPS = 10
-
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-GRAY = (200, 200, 200)
-BLUE = (0, 0, 255)
-RED = (255, 0, 0)
-YELLOW = (255, 255, 0)
 
 pygame.init()
 WIN = pygame.display.set_mode((WIDTH, WIDTH))
 pygame.display.set_caption("Lab Rat Escape")
 
-# 0 = camino, 1 = muro
-maze = [
-    [0,1,0,0,0,0,0,1,0,0,0,1,0,1,0,1,0,0,0,0],
-    [0,1,0,1,1,1,0,1,0,1,0,1,0,1,0,1,1,1,1,0],
-    [0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,1,0],
-    [1,1,1,1,0,1,1,1,0,1,1,1,1,1,1,1,0,1,1,0],
-    [0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0],
-    [0,1,1,1,1,1,0,1,1,1,1,1,1,1,0,1,1,1,1,0],
-    [0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0],
-    [1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0],
-    [0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0],
-    [0,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0,1,0],
-    [0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,1,0],
-    [1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0,1,0,1,0],
-    [0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,1,0,0,0],
-    [0,1,1,1,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1],
-    [0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
-    [1,1,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
-    [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0]
-]
+def generate_maze(rows):
+    maze = [[1 for _ in range(rows)] for _ in range(rows)]
 
-start_pos = (0, 0)
-goal_pos = (19, 19)
-robot_pos = (19, 0)
+    def carve_passages_from(cx, cy):
+        directions = [(0,1),(1,0),(0,-1),(-1,0)]
+        random.shuffle(directions)
+        for dx, dy in directions:
+            nx, ny = cx + dx*2, cy + dy*2
+            if 0 <= nx < rows and 0 <= ny < rows and maze[nx][ny] == 1:
+                maze[cx + dx][cy + dy] = 0  # romper muro intermedio
+                maze[nx][ny] = 0            # marcar celda destino
+                carve_passages_from(nx, ny)
+
+    maze[1][1] = 0
+    carve_passages_from(1,1)
+    return maze
+
+ROWS = 21  # debe ser impar para el algoritmo
+maze = generate_maze(ROWS)
+start_pos = (1, 1)
+goal_pos = (ROWS - 2, ROWS - 2)
+robot_pos = (ROWS - 2, 1)
 
 def draw_grid():
     for row in range(ROWS):
@@ -61,37 +47,7 @@ def draw_entity(pos, color):
     y = pos[0] * CELL_SIZE
     pygame.draw.rect(WIN, color, (x, y, CELL_SIZE, CELL_SIZE))
 
-def heuristic(a, b):
-    return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
-def a_star(start, goal):
-    open_set = PriorityQueue()
-    open_set.put((0, start))
-    came_from = {}
-    g_score = {start: 0}
-
-    while not open_set.empty():
-        _, current = open_set.get()
-
-        if current == goal:
-            path = []
-            while current in came_from:
-                path.append(current)
-                current = came_from[current]
-            path.reverse()
-            return path
-
-        for d in [(-1,0), (1,0), (0,-1), (0,1)]:
-            neighbor = (current[0] + d[0], current[1] + d[1])
-
-            if 0 <= neighbor[0] < ROWS and 0 <= neighbor[1] < ROWS and maze[neighbor[0]][neighbor[1]] == 0:
-                temp_g = g_score[current] + 1
-                if neighbor not in g_score or temp_g < g_score[neighbor]:
-                    g_score[neighbor] = temp_g
-                    f_score = temp_g + heuristic(neighbor, goal)
-                    open_set.put((f_score, neighbor))
-                    came_from[neighbor] = current
-    return []
 
 def main():
     global start_pos, robot_pos
@@ -116,7 +72,7 @@ def main():
             start_pos = new_pos
 
         # A* para mover al robot
-        path = a_star(robot_pos, start_pos)
+        path = a_star(robot_pos, start_pos, maze)
         if path:
             robot_pos = path[0]  # mueve 1 paso
 
@@ -128,10 +84,10 @@ def main():
         pygame.display.update()
 
         if start_pos == goal_pos:
-            print("¡Ganaste!")
+            print(MSG_WIN)
             running = False
         elif robot_pos == start_pos:
-            print("¡Te atraparon!")
+            print(MSG_LOSE)
             running = False
 
     pygame.quit()
