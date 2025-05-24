@@ -1,12 +1,13 @@
 # robot.py
 
-from a_star import a_star
+from constants import GRID_HEIGHT
 
-class Robot:
-    def __init__(self, pos):
-        self.pos = pos
+robot_pos = (GRID_HEIGHT - 2, 1)
+robot_dir = (0, 1)
 
-    def update(self, maze, target_pos):
-        path = a_star(self.pos, target_pos, maze)
-        if path:
-            self.pos = path[0]
+def update_robot_position(path):
+    global robot_pos, robot_dir
+    if path:
+        next_pos = path[0]
+        robot_dir = (next_pos[0] - robot_pos[0], next_pos[1] - robot_pos[1])
+        robot_pos = next_pos
