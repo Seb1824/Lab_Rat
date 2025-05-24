@@ -4,8 +4,7 @@ import pygame
 import random
 from constants import *
 from maze import generate_maze
-from player import player_pos, player_dir, update_player_position
-from robot import robot_pos, robot_dir
+from player import update_player_position
 from a_star import a_star
 
 pygame.init()
@@ -18,10 +17,10 @@ from images import rat_images, robot_images, cheese_images, start_bg, win_bg, bu
 robot_move_delay = 2  
 robot_move_counter = 0
 
-maze = generate_maze(GRID_HEIGHT, GRID_WIDTH)
-goal_pos = (GRID_HEIGHT - 2, GRID_WIDTH - 2)
+#maze = generate_maze(GRID_HEIGHT, GRID_WIDTH)
+#goal_pos = (GRID_HEIGHT - 2, GRID_WIDTH - 2)
 
-def draw_grid():
+def draw_grid(maze):
     for row in range(GRID_HEIGHT):
         for col in range(GRID_WIDTH):
             x = col * CELL_SIZE
@@ -41,7 +40,7 @@ def button_clicked(button_rect):
 def start_screen():
     while True:
         WIN.blit(start_bg, (0, 0))
-        btn_rect = WIN.blit(button_play, (SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 - 40))
+        btn_rect = WIN.blit(button_play, (SCREEN_WIDTH // 2 - 110, SCREEN_HEIGHT // 2 + 6))
         pygame.display.update()
 
         for event in pygame.event.get():
@@ -51,19 +50,21 @@ def start_screen():
                 if button_clicked(btn_rect):
                     return
 
-def end_screen(won):
+def end_screen(won, maze=None):
     while True:
         if won:
             WIN.blit(win_bg, (0, 0))
+            btn_rect = WIN.blit(button_play, (SCREEN_WIDTH // 2 - 110, SCREEN_HEIGHT // 2 + 105))
         else:
-            draw_grid()
+            draw_grid(maze)
+
             s = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
             s.set_alpha(180)
             s.fill((0, 0, 0))
             WIN.blit(s, (0, 0))
-            WIN.blit(lose_overlay, (SCREEN_WIDTH // 2 - 200, SCREEN_HEIGHT // 2 - 100))
+            WIN.blit(lose_overlay, (0, 0))
+            btn_rect = WIN.blit(button_play, (SCREEN_WIDTH // 2 - 110, SCREEN_HEIGHT // 2 + 125))
 
-        btn_rect = WIN.blit(button_play, (SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 + 60))
         pygame.display.update()
 
         for event in pygame.event.get():
@@ -80,10 +81,14 @@ def main():
     while True:
         start_screen()
         # Reset positions y laberinto
-        player_dir = (0, 1)
-        robot_dir = (0, -1)
         maze = generate_maze(GRID_HEIGHT, GRID_WIDTH)
         goal_pos = (GRID_HEIGHT - 2, GRID_WIDTH - 2)
+        player_pos = (1, 1)
+        robot_pos = (GRID_HEIGHT - 2, 1)
+        
+        player_dir = (0, 1)
+        robot_dir = (0, -1)
+        
 
         cheese_shake_timer = 0
         cheese_shake_duration = 5
@@ -132,7 +137,7 @@ def main():
                 cheese_offset = (0, 0)
 
             WIN.fill(WHITE)
-            draw_grid()
+            draw_grid(maze)
             draw_image(goal_pos, cheese_images, offset=cheese_offset)
             draw_image(player_pos, rat_images.get(player_dir, rat_images[(0, 1)]))
             draw_image(robot_pos, robot_images.get(robot_dir, robot_images[(0, -1)]))
@@ -142,7 +147,7 @@ def main():
                 end_screen(won=True)
                 break
             elif robot_pos == player_pos:
-                end_screen(won=False)
+                end_screen(won=False, maze=maze)
                 break
 
 if __name__ == "__main__":
