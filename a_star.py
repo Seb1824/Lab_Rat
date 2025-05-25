@@ -1,10 +1,11 @@
+# a_star.py 
+
 from queue import PriorityQueue
 
-def heuristic(a, b):
-    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+def heuristic(a, b): # Heurística: distancia de Manhattan
+    return abs(a[0] - b[0]) + abs(a[1] - b[1]) # |fila_actual - fila_objetivo| + |col_actual - col_objetivo|
 
 def a_star(start, goal, maze):
-
     rows = len(maze)
     cols = len(maze[0]) if maze else 0
 
@@ -17,7 +18,7 @@ def a_star(start, goal, maze):
         _, current = open_set.get()
 
         if current == goal:
-            # Reconstruir el camino desde goal hasta start
+            # Reconstruir camino
             path = []
             while current in came_from:
                 path.append(current)
