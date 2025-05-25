@@ -9,7 +9,7 @@ def has_two_paths(start, goal, game_map):
     if not path1:
         return False
 
-     # Copia el mapa y bloquea el primer camino (excepto inicio y meta)
+    # Copia el mapa y bloquea el primer camino (excepto inicio y meta)
     alt_map = copy.deepcopy(game_map)
     for pos in path1[1:-1]: 
         alt_map[pos[0]][pos[1]] = 1  

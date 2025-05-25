@@ -2,11 +2,9 @@
 
 import pygame
 
-# Posición y dirección inicial del jugador
 player_pos = (1, 1)
 player_dir = (0, 1)
 
-# Actualiza la posición del jugador según la entrada del teclado
 def update_player_position(keys, current_pos, current_dir, maze):
     dx, dy = 0, 0
     if keys[pygame.K_UP] or keys[pygame.K_w]:

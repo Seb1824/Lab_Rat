@@ -5,7 +5,6 @@ from constants import GRID_HEIGHT
 robot_pos = (GRID_HEIGHT - 2, 1)
 robot_dir = (0, 1)
 
-# Actualiza la posición del robot siguiendo el siguiente paso en el camino
 def update_robot_position(path):
     global robot_pos, robot_dir
     if path:
