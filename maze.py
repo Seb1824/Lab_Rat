@@ -3,6 +3,7 @@ from constants import GRID_HEIGHT, GRID_WIDTH
 from a_star import a_star
 import copy
 
+#Crea dos caminos
 def has_two_paths(start, goal, game_map):
     path1 = a_star(start, goal, game_map)
     if not path1:
