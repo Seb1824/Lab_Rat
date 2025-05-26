@@ -17,7 +17,8 @@ def update_player_position(keys, current_pos, current_dir, maze):
         dx, dy = 0, 1
 
     new_pos = (current_pos[0] + dx, current_pos[1] + dy)
-    # Verifica que el movimiento sea válido (dentro del laberinto y sin chocar)
+
+    # Movimiento válido (dentro del laberinto y sin chocar)
     if 0 <= new_pos[0] < len(maze) and 0 <= new_pos[1] < len(maze[0]) and maze[new_pos[0]][new_pos[1]] == 0:
         return new_pos, (dx, dy)
     return current_pos, current_dir
