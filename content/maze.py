@@ -1,3 +1,5 @@
+# maze.py 
+
 import random
 from constants import GRID_HEIGHT, GRID_WIDTH
 from a_star import a_star
