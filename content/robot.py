@@ -1,6 +1,6 @@
 # robot.py
 
-from constants import GRID_HEIGHT
+from content.constants import GRID_HEIGHT
 
 robot_pos = (GRID_HEIGHT - 2, 1)
 robot_dir = (0, 1)

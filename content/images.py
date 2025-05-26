@@ -1,7 +1,7 @@
 # images.py
 
 import pygame
-from constants import CELL_SIZE
+from content.constants import CELL_SIZE
 
 def load_scaled_image(path, target_size=None):
     image = pygame.image.load(path).convert_alpha()
