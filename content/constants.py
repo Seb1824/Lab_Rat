@@ -20,4 +20,4 @@ FPS = 10
 DIRECTIONS = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 
 MSG_WIN = "¡Ganaste!"
-MSG_LOSE = "¡Te atraparon!"
+MSG_LOSE = "¡Perdiste!"
