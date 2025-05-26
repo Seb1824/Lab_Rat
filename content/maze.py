@@ -1,6 +1,8 @@
+# maze.py
+
 import random
-from constants import GRID_HEIGHT, GRID_WIDTH
-from a_star import a_star
+from content.constants import GRID_HEIGHT, GRID_WIDTH
+from content.a_star import a_star
 import copy
 
 def has_two_paths(start, goal, game_map):

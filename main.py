@@ -2,17 +2,17 @@
 
 import pygame
 import random
-from constants import *
-from maze import generate_map
-from player import player_pos, player_dir, update_player_position
-from robot import robot_pos, robot_dir
-from a_star import a_star
+from content.constants import *
+from content.maze import generate_map
+from content.player import player_pos, player_dir, update_player_position
+from content.robot import robot_pos, robot_dir
+from content.a_star import a_star
 
 pygame.init()
 WIN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Lab Rat Escape")
 
-from images import rat_images, robot_images, cheese_images, start_bg, win_bg, button_play, lose_overlay
+from content.images import rat_images, robot_images, cheese_images, start_bg, win_bg, button_play, lose_overlay
 
 #robot_move_delay = 2  
 #robot_move_counter = 0
